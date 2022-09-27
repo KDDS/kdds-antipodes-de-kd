@@ -1,0 +1,122 @@
+
+version: "3.9"
+
+services:
+
+  jupyter:
+    deploy:
+      replicas: 1
+    # Pushed to local registry for testing a stack deployment in swarm mode 
+    # refer https://docs.docker.com/engine/swarm/stack-deploy/
+    image: 127.0.0.1:5000/img_jupyter
+    # ideally the image should be pulled from the registry while deploying into the stack
+    build:
+      context: ./dev
+      target: jbuild
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=dockerst
+    working_dir: /home/jupyterlab
+    ports:
+      - 8888:8888 
+    command:
+      - jupyter-lab
+      - --ip=0.0.0.0
+      - --port=8888
+      - --allow-root
+      - --no-browser
+    depends_on:
+      - mssql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  rstudio:
+    deploy:
+      replicas: 1
+    # Pushed to local registry for testing a stack deployment in swarm mode 
+    # refer https://docs.docker.com/engine/swarm/stack-deploy/
+    image: 127.0.0.1:5000/img_rstudio
+    # ideally the image should be pulled from the registry while deploying into the stack
+    build:
+      context: ./dev
+      target: rstdbuild
+    environment:
+      - DEBIAN_FRONTEND=noninteractive 
+    working_dir: /home/rstudio/workspace 
+    entrypoint: /usr/lib/rstudio-server/bin/rserver 
+    command:
+      - --server-daemonize=0
+      - --server-app-armor-enabled=0
+    ports:
+        - 8787:8787
+    depends_on:
+      - mssql
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+
+  scheduler:
+    deploy:
+      replicas: 1
+    # Pushed to local registry for testing a stack deployment in swarm mode 
+    # refer https://docs.docker.com/engine/swarm/stack-deploy/
+    image: 127.0.0.1:5000/img_scheduler
+    # ideally the image should be pulled from the registry while deploying into the stack
+    build:
+      context: ./dev
+      target: schbuild
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    depends_on:
+      - mssql
+    entrypoint: sh /home/rstudio/jobs/crontab.sh
+    extra_hosts:
+     - "host.docker.internal:host-gateway"
+
+  mssql:
+    deploy:
+      replicas: 1
+    # Pushed to local registry for testing a stack deployment in swarm mode 
+    # refer https://docs.docker.com/engine/swarm/stack-deploy/
+    image: 127.0.0.1:5000/img_mssql
+    # ideally the image should be pulled from the registry while deploying into the stack
+    build:
+      context: ./db
+      target: mssqlbuild
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_IP_ADDRESS=0.0.0.0
+      - MSSQL_PID=Developer
+    # The passwords should be ideally pointing to the secrets. However they can be passed as arguments to docker [contd.]
+    # build in a CI CD environment. External cloud secret stores can also be used for rotating the secrets.
+      - MSSQL_SA_PASSWORD=Yukon900
+      - MSSQL_DEV_PASSWORD=d3v_p@sswd
+      - SERVICE_PORTS=1433
+    volumes:
+    # docker volume create persist-data-vol
+      - persist-data-vol:/var/opt/mssql
+    # ideally should use secrets. Not used here for simplicity
+    # secrets:
+    #     - db_sa_password
+    #     - db_dev_password
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  persist-data-vol:
+
+# secrets: 
+#   db_dev_password:
+#     # external: true
+#     file: ./secrets/mssql_dev_pwd.txt 
+#   db_sa_password:
+#     # external: true
+#     file: ./secrets/mssql_sa_pwd.txt
+ 
+
+
+
+
+
