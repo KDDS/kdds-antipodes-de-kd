@@ -7,7 +7,7 @@ Repository containing docker stack deployment and other relevant DE work
 
 - **Stack** : Named volume is mounted. Create the volume before deployment p: docker volume create persist-data-vol OR create a volume as a service in swarm mode
 
-- **Stack** : Ideally the workflow is to test the service and build the image locally or in a CI CD pipeline and push the images to a container registry. The stack can then be deployed into a cluster by using the compose file but having the image tag. In the attached docker compose file both the image and build tags are provided - they need to be used accordingly. The associated image was pushed to a local container registry for testing [ follow : https://docs.docker.com/engine/swarm/stack-deploy/ ]
+- **Stack** : Ideally the workflow is to test the service and build the image locally or in a CI CD pipeline and push the images to a container registry. The stack can then be deployed into a cluster by using the compose file but having the image tag. In the attached docker compose file both the image and build tags are provided - they need to be used accordingly. The associated image was pushed to a local container registry for testing [ follow : https://docs.docker.com/engine/swarm/stack-deploy/ ]. Use **Build : "." when *image* tag is used , to deploy into swarm.
 
 - **Stack** : The folder structure  for stack deployment should be AS IS the structure in GIT folder data-stack. The secrets folder is optional and for local testing only in a non swarm environment
 
