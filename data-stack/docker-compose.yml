@@ -8,7 +8,7 @@ services:
       replicas: 1
     # Pushed to local registry for testing a stack deployment in swarm mode 
     # refer https://docs.docker.com/engine/swarm/stack-deploy/
-    image: 127.0.0.1:5000/img_jupyter
+    # image: 127.0.0.1:5000/img_jupyter
     # ideally the image should be pulled from the registry while deploying into the stack
     build:
       context: ./dev
@@ -36,7 +36,7 @@ services:
       replicas: 1
     # Pushed to local registry for testing a stack deployment in swarm mode 
     # refer https://docs.docker.com/engine/swarm/stack-deploy/
-    image: 127.0.0.1:5000/img_rstudio
+    # image: 127.0.0.1:5000/img_rstudio
     # ideally the image should be pulled from the registry while deploying into the stack
     build:
       context: ./dev
@@ -60,7 +60,7 @@ services:
       replicas: 1
     # Pushed to local registry for testing a stack deployment in swarm mode 
     # refer https://docs.docker.com/engine/swarm/stack-deploy/
-    image: 127.0.0.1:5000/img_scheduler
+    # image: 127.0.0.1:5000/img_scheduler
     # ideally the image should be pulled from the registry while deploying into the stack
     build:
       context: ./dev
@@ -78,7 +78,7 @@ services:
       replicas: 1
     # Pushed to local registry for testing a stack deployment in swarm mode 
     # refer https://docs.docker.com/engine/swarm/stack-deploy/
-    image: 127.0.0.1:5000/img_mssql
+    # image: 127.0.0.1:5000/img_mssql
     # ideally the image should be pulled from the registry while deploying into the stack
     build:
       context: ./db
